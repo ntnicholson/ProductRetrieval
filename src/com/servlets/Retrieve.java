@@ -1,6 +1,8 @@
 package com.servlets;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,26 +21,41 @@ public class Retrieve extends HttpServlet {
        
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		response.setContentType("text/html");
 		Product find = new Product();
 		ProductService ps = new ProductService();
 		
 		find.setProductId(Integer.parseInt(request.getParameter("productID")));
-		System.out.println("before retrieve method");
-		Product temp = ps.RetrieveProduct(find);
+		Product search = ps.RetrieveProduct(find);
 		
-		find.setProductId(temp.getProductId());
+		//Display result to user
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
 		
-		if (find.getProductId() == 0) {
-			response.sendRedirect("home.html");
+		if (search.getProductId() == 0) {
 			
-		}else 
-		{
-			System.out.println(find.toString());
-			response.sendRedirect("dashboard.html");
+			out.println("<h1>[Error] Product ID #" + find.getProductId() + " could not be found.</h1>");
+			out.print("Click the button to search for a new Product.<br/>");
+			out.print("<a href='product.html'><button>Search</button></a>");
 		}
-		
-		
+		else 
+		{
+			out.println("<h1>Product Details</h1><br/>");
+			out.print(
+					"<table border=1 border-collapse=collapse width=90%>"
+							+ "<tr>"
+								+ "<th>ID</th>"
+								+ "<th>Name</th>"
+								+ "<th>Price</th>"
+							+ "<tr/>"
+							+ "<tr>"
+								+ "<td>" + search.getProductId() + "</td>"
+								+ "<td>" + search.getName() + "</td>"
+								+ "<td>" + search.getPrice() + "</td>"
+							+ "<tr/>"
+				+ "</table><br/>");
+			out.print("Click the button to search for a new Product.<br/>");
+			out.print("<a href='product.html'><button>Search</button></a>");
+		}
 	}
 
 }

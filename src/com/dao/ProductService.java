@@ -14,28 +14,27 @@ public class ProductService
 	public Product RetrieveProduct(Product find) 
 	{
 		String sql = "SELECT * from Product WHERE (?) = productID";
-		Product p = new Product();
+		Product result = new Product();
+		result.setProductId(0); //Flag: # should be greater than 0.
 		
 		try {
 			DBCon db = new DBCon();
 			Connection conn = db.getConnection();
-			System.out.println("Connection: " + conn.toString());
 			
 			//Write the Statement
-			System.out.println(sql);
 			PreparedStatement pst = conn.prepareStatement(sql);
 			pst.setInt(1, find.getProductId());
+			System.out.println(pst.toString());
 			
 			//Execute the statement		
 			ResultSet rs = pst.executeQuery();	
 			
 			while (rs.next()) 
 			{
-				p.setProductId(rs.getInt(1));
-				p.setName(rs.getString(2));
-				p.setPrice(rs.getDouble(3));
+				result.setProductId(rs.getInt(1));
+				result.setName(rs.getString(2));
+				result.setPrice(rs.getDouble(3));
 			}
-			
 			conn.close();
 			
 		} catch (SQLException e) {
@@ -45,6 +44,6 @@ public class ProductService
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return p;
+		return result;
 	}
 }
